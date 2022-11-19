@@ -14,6 +14,8 @@ _z_avg = 0
 _Rq = 0
 _dRq = 0
 
+_Rsk = 0
+
 def smooth_abs(x):
     return np.sqrt(x**2 + ABS_EPS)
 
@@ -41,6 +43,12 @@ def Rq(z):
 
 def dRq_dz(z):
     return (z - _z_avg)*(1 - 1/LEN)/_Rq
+
+def Rsk(z):
+    return np.sum(np.power(z - _z_avg, 3))/(LEN*_Rq**3)
+
+def dRsk_dz(z):
+    return 3*(np.power(z - _z_avg, 2)*(1 - 1/LEN)/(LEN*_Rq**3) - (_Rsk/_Rq)*_dRq)
    
 delta_max = 1e10
 delta_min = 1e-30
@@ -59,10 +67,17 @@ lRa = Ra(z)
 lRa_old1 = lRa
 lRa_old2 = lRa
 
+_Rq = Rq(z)
+_dRq = dRa_dz(z)
+
+_Rsk = Rsk(z)
+Rsk_old1 = _Rsk
+Rsk_old2 = _Rsk
+
 ETA0 = 1
-ETA1 = 1
+ETA1 = 5e2
 L0 = lRa
-L1 = 0
+L1 = _Rsk**2
 
 plt.ion()
 
@@ -73,14 +88,15 @@ line, = plt.plot(x, z)
 
 plt.show()
 
-while abs(lRa) > 1e-6:
-    S = ETA0*dRa_dz(z)
+while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6:
+    S = ETA0*dRa_dz(z) + ETA1*L1*2*_Rsk*dRsk_dz(z)
 
     Ra_e = (lRa-lRa_old1)*(lRa_old1-lRa_old2)
+    Rsk_e = (_Rsk-Rsk_old1)*(Rsk_old1-Rsk_old2)
 
     for i in range(LEN):
         d_e = (z[i] - zold1[i])*(zold1[i] - zold2[i])
-        if d_e < 0 or Ra_e < 0:
+        if d_e < 0 or Ra_e < 0 or Rsk_e < 0:
             delta_e[i] = max(0.1*delta_e[i], delta_min)
         elif d_e > 0:
             delta_e[i] = min(1.1*delta_e[i], delta_max)
@@ -105,7 +121,6 @@ while abs(lRa) > 1e-6:
     fig.canvas.draw()
     fig.canvas.flush_events()
 
-    L0 += lRa
     lRa_old2 = lRa_old1
     lRa_old1 = lRa
     lRa = Ra(z)
@@ -113,12 +128,13 @@ while abs(lRa) > 1e-6:
     _Rq = Rq(z)
     _dRq = dRa_dz(z)
 
+    L1 += _Rsk**2
+    _Rsk = Rsk(z)
+
     print(_z_avg)
     print(_Ra)
+    print(_Rsk)
     print("")
-
-print(_z_avg)
-print(_Ra)
 
 input()
 
