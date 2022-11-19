@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 Ra_max = 1.5
 ABS_EPS = 1e-15
 
+LEN = 500
+
 _Ra = 0
 _z_avg = 0
 
@@ -25,13 +27,12 @@ def Ra(z):
 
     z_avg(z)
 
-    _Ra = np.sum(smooth_abs(z-_z_avg))/len(z)
+    _Ra = np.sum(smooth_abs(z-_z_avg))/LEN
     return (_Ra - Ra_max)**2
 
 def dRa_dz(z):
-    return 2*(_Ra - Ra_max)*smooth_abs_deriv(z - _z_avg)*(1 - 1/len(z))
+    return 2*(_Ra - Ra_max)*smooth_abs_deriv(z - _z_avg)*(1 - 1/LEN)
 
-LEN = 500
    
 delta_max = 1e10
 delta_min = 1e-30
@@ -69,7 +70,7 @@ while abs(lRa) > 1e-6:
 
     Ra_e = (lRa-lRa_old1)*(lRa_old1-lRa_old2)
 
-    for i in range(len(z)):
+    for i in range(LEN):
         d_e = (z[i] - zold1[i])*(zold1[i] - zold2[i])
         if d_e < 0 or Ra_e < 0:
             delta_e[i] = max(0.1*delta_e[i], delta_min)
