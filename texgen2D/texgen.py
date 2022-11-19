@@ -160,6 +160,8 @@ while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6:
     _dRq = dRq_dz(z)
 
     L1 += _Rsk**2
+    Rsk_old1 = Rsk_old2
+    Rsk_old2 = _Rsk**2
     _Rsk = Rsk(z)
 
     print(_z_avg)
