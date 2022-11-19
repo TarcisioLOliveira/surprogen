@@ -10,6 +10,9 @@ LEN = 500
 
 _Ra = 0
 _z_avg = 0
+_dz_avg = 0
+
+_dA = 0
 
 _Rq = 0
 _dRq = 0
@@ -22,33 +25,58 @@ def smooth_abs(x):
 def smooth_abs_deriv(x):
     return np.divide(x, np.sqrt(np.power(x, 2) + ABS_EPS))
 
-def z_avg(z):
+def A(x, z):
+    A = 0
+    for i in range(1, LEN):
+        A += ((z[i]-z[i-1])/(x[i]-x[i-1]))*((x[i]**2)/2-(x[i-1]**2)/2) + z[i-1]*x[i] - z[i]*x[i-1]
+
+    return A
+
+def dA_dz(x, z):
+    dA = np.zeros_like(x)
+    for i in range(1, LEN):
+        dA[i-1] += ((-1)/(x[i]-x[i-1]))*((x[i]**2)/2-(x[i-1]**2)/2) + x[i]
+        dA[i-1] += (( 1)/(x[i]-x[i-1]))*((x[i]**2)/2-(x[i-1]**2)/2) - x[i-1]
+
+    return dA
+
+def z_avg(x, z):
     global _z_avg
 
-    _z_avg = np.sum(z)/len(z)
+    _A = A(x, z)
+    _z_avg = _A/(x[-1] - x[0])
 
-def Ra(z):
+def dz_avg_dz(x, z):
+    global _dz_avg
+
+    _dz_avg = _dA/(x[-1] - x[0])
+
+
+def Ra(x, z):
     global _Ra
 
-    z_avg(z)
+    z_avg(x, z)
 
     _Ra = np.sum(smooth_abs(z-_z_avg))/LEN
     return (_Ra - Ra_max)**2
 
-def dRa_dz(z):
-    return 2*(_Ra - Ra_max)*smooth_abs_deriv(z - _z_avg)*(1 - 1/LEN)
+def dRa_dz(x, z):
+
+    dz_avg_dz(x, z)
+
+    return 2*(_Ra - Ra_max)*np.multiply(smooth_abs_deriv(z - _z_avg), 1 - _dz_avg)
 
 def Rq(z):
     return np.sqrt(np.sum(np.power(z - _z_avg, 2))/LEN)
 
 def dRq_dz(z):
-    return (z - _z_avg)*(1 - 1/LEN)/(LEN*_Rq)
+    return np.multiply((z - _z_avg), 1 - _dz_avg)/(LEN*_Rq)
 
 def Rsk(z):
     return np.sum(np.power(z - _z_avg, 3))/(LEN*_Rq**3)
 
 def dRsk_dz(z):
-    return 3*(np.power(z - _z_avg, 2)*(1 - 1/LEN)/(LEN*_Rq**3) - (_Rsk/_Rq)*_dRq)
+    return 3*(np.multiply(np.power(z - _z_avg, 2), 1 - _dz_avg)/(LEN*_Rq**3) - (_Rsk/_Rq)*_dRq)
    
 delta_max = 1e10
 delta_min = 1e-30
@@ -63,7 +91,10 @@ zold1 = z
 zold2 = z
 delta_e = np.ones_like(x)*delta
 
-lRa = Ra(z)
+# This is constant
+_dA = dA_dz(x, z)
+
+lRa = Ra(x, z)
 lRa_old1 = lRa
 lRa_old2 = lRa
 
@@ -89,7 +120,7 @@ line, = plt.plot(x, z)
 plt.show()
 
 while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6:
-    S = ETA0*dRa_dz(z) + ETA1*L1*2*_Rsk*dRsk_dz(z)
+    S = ETA0*dRa_dz(x, z) + ETA1*L1*2*_Rsk*dRsk_dz(z)
 
     Ra_e = (lRa-lRa_old1)*(lRa_old1-lRa_old2)
     Rsk_e = (_Rsk-Rsk_old1)*(Rsk_old1-Rsk_old2)
@@ -123,7 +154,7 @@ while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6:
 
     lRa_old2 = lRa_old1
     lRa_old1 = lRa
-    lRa = Ra(z)
+    lRa = Ra(x, z)
 
     _Rq = Rq(z)
     _dRq = dRq_dz(z)
