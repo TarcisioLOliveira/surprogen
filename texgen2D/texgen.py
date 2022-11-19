@@ -68,7 +68,7 @@ lRa_old1 = lRa
 lRa_old2 = lRa
 
 _Rq = Rq(z)
-_dRq = dRa_dz(z)
+_dRq = dRq_dz(z)
 
 _Rsk = Rsk(z)
 Rsk_old1 = _Rsk
@@ -126,7 +126,7 @@ while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6:
     lRa = Ra(z)
 
     _Rq = Rq(z)
-    _dRq = dRa_dz(z)
+    _dRq = dRq_dz(z)
 
     L1 += _Rsk**2
     _Rsk = Rsk(z)
