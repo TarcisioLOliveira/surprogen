@@ -42,7 +42,7 @@ def Rq(z):
     return np.sqrt(np.sum(np.power(z - _z_avg, 2))/LEN)
 
 def dRq_dz(z):
-    return (z - _z_avg)*(1 - 1/LEN)/_Rq
+    return (z - _z_avg)*(1 - 1/LEN)/(LEN*_Rq)
 
 def Rsk(z):
     return np.sum(np.power(z - _z_avg, 3))/(LEN*_Rq**3)
