@@ -18,6 +18,7 @@ _Rq = 0
 _dRq = 0
 
 _Rsk = 0
+_Rku = 0
 
 def smooth_abs(x):
     return np.sqrt(x**2 + ABS_EPS)
@@ -77,6 +78,12 @@ def Rsk(z):
 
 def dRsk_dz(z):
     return 3*(np.multiply(np.power(z - _z_avg, 2), 1 - _dz_avg)/(LEN*_Rq**3) - (_Rsk/_Rq)*_dRq)
+
+def Rku(z):
+    return np.sum(np.power(z - _z_avg, 4))/(LEN*_Rq**4)
+
+def dRku_dz(z):
+    return 4*(np.multiply(np.power(z - _z_avg, 3), 1 - _dz_avg)/(LEN*_Rq**4) - (_Rku/_Rq)*_dRq)
    
 delta_max = 1e10
 delta_min = 1e-30
@@ -105,10 +112,16 @@ _Rsk = Rsk(z)
 Rsk_old1 = _Rsk
 Rsk_old2 = _Rsk
 
+_Rku = Rku(z)
+Rku_old1 = _Rku
+Rku_old2 = _Rku
+
 ETA0 = 1
-ETA1 = 5e2
+ETA1 = 1
+ETA2 = 1
 L0 = lRa
 L1 = _Rsk**2
+L2 = (_Rku - 3)**2
 
 plt.ion()
 
@@ -119,18 +132,32 @@ line, = plt.plot(x, z)
 
 plt.show()
 
-while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6:
-    S = ETA0*dRa_dz(x, z) + ETA1*L1*2*_Rsk*dRsk_dz(z)
+INC = 1.5
+DEC = 0.9
+
+NN = 1e-4
+
+while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6 or abs(_Rku) > 1e-6:
+    S = ETA0*dRa_dz(x, z) + ETA1*L1*2*_Rsk*dRsk_dz(z) + ETA2*L2*2*(_Rku - 3)*dRku_dz(z)
+    print(np.max(S))
 
     Ra_e = (lRa-lRa_old1)*(lRa_old1-lRa_old2)
-    Rsk_e = (_Rsk-Rsk_old1)*(Rsk_old1-Rsk_old2)
+    Rsk_e = (_Rsk**2-Rsk_old1)*(Rsk_old1-Rsk_old2)
+    Rku_e = ((_Rku-3)**2-Rku_old1)*(Rku_old1-Rku_old2)
+
+    # if Ra_e < 0 or Rsk_e < 0 or Rku_e < 0:
+    #     NN *= DEC
+    # elif Ra_e > 0 or Rsk_e > 0 or Rku_e > 0:
+    #     NN *= INC
+
+    # z -= NN*S
 
     for i in range(LEN):
         d_e = (z[i] - zold1[i])*(zold1[i] - zold2[i])
-        if d_e < 0 or Ra_e < 0 or Rsk_e < 0:
-            delta_e[i] = max(0.9*delta_e[i], delta_min)
-        elif d_e > 0:
-            delta_e[i] = min(2*delta_e[i], delta_max)
+        if d_e < 0 or Ra_e < 0 or Rsk_e < 0 or Rku_e < 0:
+            delta_e[i] = max(DEC*delta_e[i], delta_min)
+        elif d_e > 0 or Ra_e > 0 or Rsk_e > 0 or Rku_e > 0:
+            delta_e[i] = min(INC*delta_e[i], delta_max)
 
         z_inf = z[i] - delta_e[i]
         z_sup = z[i] + delta_e[i]
@@ -164,9 +191,15 @@ while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6:
     Rsk_old2 = _Rsk**2
     _Rsk = Rsk(z)
 
+    L2 += (_Rku - 3)**2
+    Rku_old1 = Rku_old2
+    Rku_old2 = (_Rku - 3)**2
+    _Rku = Rku(z)
+
     print(_z_avg)
     print(_Ra)
     print(_Rsk)
+    print(_Rku)
     print("")
 
 input()
