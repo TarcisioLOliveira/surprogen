@@ -52,7 +52,7 @@ def dRsk_dz(z):
    
 delta_max = 1e10
 delta_min = 1e-30
-delta = 1
+delta = 1e-1
 
 z_min = -4
 z_max = 4
@@ -97,9 +97,9 @@ while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6:
     for i in range(LEN):
         d_e = (z[i] - zold1[i])*(zold1[i] - zold2[i])
         if d_e < 0 or Ra_e < 0 or Rsk_e < 0:
-            delta_e[i] = max(0.1*delta_e[i], delta_min)
+            delta_e[i] = max(0.9*delta_e[i], delta_min)
         elif d_e > 0:
-            delta_e[i] = min(1.1*delta_e[i], delta_max)
+            delta_e[i] = min(2*delta_e[i], delta_max)
 
         z_inf = z[i] - delta_e[i]
         z_sup = z[i] + delta_e[i]
