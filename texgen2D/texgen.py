@@ -11,6 +11,9 @@ LEN = 500
 _Ra = 0
 _z_avg = 0
 
+_Rq = 0
+_dRq = 0
+
 def smooth_abs(x):
     return np.sqrt(x**2 + ABS_EPS)
 
@@ -33,6 +36,11 @@ def Ra(z):
 def dRa_dz(z):
     return 2*(_Ra - Ra_max)*smooth_abs_deriv(z - _z_avg)*(1 - 1/LEN)
 
+def Rq(z):
+    return np.sqrt(np.sum(np.power(z - _z_avg, 2))/LEN)
+
+def dRq_dz(z):
+    return (z - _z_avg)*(1 - 1/LEN)/_Rq
    
 delta_max = 1e10
 delta_min = 1e-30
@@ -101,6 +109,9 @@ while abs(lRa) > 1e-6:
     lRa_old2 = lRa_old1
     lRa_old1 = lRa
     lRa = Ra(z)
+
+    _Rq = Rq(z)
+    _dRq = dRa_dz(z)
 
     print(_z_avg)
     print(_Ra)
