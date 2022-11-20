@@ -144,7 +144,6 @@ NN = 1e-4
 
 while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6 or abs(_Rku - 3) > 1e-6:
     S = ETA0*dRa_dz(x, z) + ETA1*L1*2*(_Rsk - Rsk_max)*dRsk_dz(z) + ETA2*L2*2*(_Rku - Rku_max)*dRku_dz(z)
-    print(np.max(S))
 
     Ra_e = (lRa-lRa_old1)*(lRa_old1-lRa_old2)
     Rsk_e = ((_Rsk - Rsk_max)**2-Rsk_old1)*(Rsk_old1-Rsk_old2)
@@ -201,10 +200,10 @@ while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6 or abs(_Rku - 3) > 1e-6:
     Rku_old2 = (_Rku - Rku_max)**2
     _Rku = Rku(z)
 
-    print(_z_avg)
-    print(_Ra)
-    print(_Rsk)
-    print(_Rku)
+    print("z_avg: ", _z_avg)
+    print("Ra:    ", _Ra)
+    print("Rsk:   ", _Rsk)
+    print("Rku:   ", _Rku)
     print("")
 
 input()
