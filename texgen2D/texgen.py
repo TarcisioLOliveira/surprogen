@@ -33,16 +33,18 @@ def smooth_abs_deriv(x):
 
 def A(x, z):
     A = 0
+    dx = x[1] - x[0]
     for i in range(1, LEN):
-        A += ((z[i]-z[i-1])/(x[i]-x[i-1]))*((x[i]**2)/2-(x[i-1]**2)/2) + z[i-1]*x[i] - z[i]*x[i-1]
+        A += 0.5*dx*(z[i]+z[i-1])
 
     return A
 
 def dA_dz(x, z):
     dA = np.zeros_like(x)
+    dx = x[1] - x[0]
     for i in range(1, LEN):
-        dA[i-1] += ((-1)/(x[i]-x[i-1]))*((x[i]**2)/2-(x[i-1]**2)/2) + x[i]
-        dA[i-1] += (( 1)/(x[i]-x[i-1]))*((x[i]**2)/2-(x[i-1]**2)/2) - x[i-1]
+        dA[i-1] += 0.5*dx
+        dA[i  ] += 0.5*dx
 
     return dA
 
