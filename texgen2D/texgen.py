@@ -26,7 +26,7 @@ _Rsk = 0
 _Rku = 0
 
 def smooth_abs(x):
-    return np.sqrt(x**2 + ABS_EPS)
+    return np.sqrt(np.power(x, 2) + ABS_EPS)
 
 def smooth_abs_deriv(x):
     return np.divide(x, np.sqrt(np.power(x, 2) + ABS_EPS))
