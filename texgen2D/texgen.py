@@ -94,7 +94,7 @@ def dRku_dz(z):
    
 delta_max = 1e10
 delta_min = 1e-30
-delta = 2.5
+delta = 5
 
 rng = np.random.Generator(np.random.PCG64())
 z = rng.uniform(z_min, z_max, LEN)
@@ -122,7 +122,7 @@ Rku_old1 = _Rku
 Rku_old2 = _Rku
 
 ETA0 = 1
-ETA1 = 1
+ETA1 = 1e2
 ETA2 = 1
 L0 = lRa
 L1 = (_Rsk - Rsk_max)**2
@@ -137,8 +137,8 @@ line, = plt.plot(x, z)
 
 plt.show()
 
-INC = 2
 DEC = 0.8
+INC = 2
 
 NN = 1e-4
 
