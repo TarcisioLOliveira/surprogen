@@ -190,13 +190,13 @@ while abs(lRa) > 1e-6 or abs(_Rsk) > 1e-6 or abs(_Rku - 3) > 1e-6:
     _dRq = dRq_dz(z)
 
     L1 += (_Rsk - Rsk_max)**2
-    Rsk_old1 = Rsk_old2
-    Rsk_old2 = (_Rsk - Rsk_max)**2
+    Rsk_old2 = Rsk_old1
+    Rsk_old1 = (_Rsk - Rsk_max)**2
     _Rsk = Rsk(z)
 
     L2 += (_Rku - Rku_max)**2
-    Rku_old1 = Rku_old2
-    Rku_old2 = (_Rku - Rku_max)**2
+    Rku_old2 = Rku_old1
+    Rku_old1 = (_Rku - Rku_max)**2
     _Rku = Rku(z)
 
     print("z_avg: ", _z_avg)
