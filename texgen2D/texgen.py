@@ -70,8 +70,6 @@ def Ra(x, z):
 
 def dRa_dz(x, z):
 
-    dz_avg_dz(x, z)
-
     return 2*(_Ra - Ra_max)*np.multiply(smooth_abs_deriv(z - _z_avg), 1 - _dz_avg)
 
 def Rq(z):
@@ -105,6 +103,7 @@ delta_e = np.ones_like(x)*delta
 
 # This is constant
 _dA = dA_dz(x, z)
+dz_avg_dz(x, z)
 
 lRa = Ra(x, z)
 lRa_old1 = lRa
