@@ -4,14 +4,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 Ra_max = 1.5
-Rsk_max = 0
+Rsk_max = -1
 Rku_max = 3
 ABS_EPS = 1e-15
 
 z_min = -10
 z_max = 10
 
-LEN = 500
+LEN = 1000
 
 _Ra = 0
 _z_avg = 0
@@ -91,8 +91,8 @@ def dRku_dz(z):
     return 4*(np.multiply(np.power(z - _z_avg, 3), 1 - _dz_avg)/(LEN*_Rq**4) - (_Rku/_Rq)*_dRq)
    
 delta_max = 1e10
-delta_min = 1e-30
-delta = 5
+delta_min = 1e-3
+delta = 2
 
 rng = np.random.Generator(np.random.PCG64())
 z = rng.uniform(z_min, z_max, LEN)
@@ -121,8 +121,8 @@ Rku_old1 = _Rku
 Rku_old2 = _Rku
 
 ETA0 = 1
-ETA1 = 1e2
-ETA2 = 1
+ETA1 = 2e1
+ETA2 = 1e1
 L0 = lRa
 L1 = (_Rsk - Rsk_max)**2
 L2 = (_Rku - Rku_max)**2
@@ -136,8 +136,8 @@ line, = plt.plot(x, z)
 
 plt.show()
 
-DEC = 0.8
-INC = 2
+DEC = 0.7
+INC = 1.2
 
 NN = 1e-4
 
