@@ -79,7 +79,7 @@ def Ra(x, z):
 
 def dRa_dz(x, z):
 
-    return 2*(_Ra - Ra_max)*np.multiply(smooth_abs_deriv(z - _z_avg), 1 - _dz_avg)
+    return 2*(_Ra - Ra_max)*np.multiply(smooth_abs_deriv(z - _z_avg), 1 - _dz_avg)/LEN
 
 def Rq(z):
     return np.sqrt(np.sum(np.power(z - _z_avg, 2))/LEN)
