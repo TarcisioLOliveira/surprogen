@@ -26,7 +26,6 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Og")
 endif()
 
-find_package(SFML COMPONENTS system window graphics REQUIRED)
 find_package(YAML-CPP REQUIRED)
 find_package(Python3 COMPONENTS Interpreter Development NumPy REQUIRED)
 
@@ -48,11 +47,9 @@ else()
     message(WARNING "IPO/LTO is not supported: ${output}")
 endif()
 
-
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
     SYSTEM
-    ${SFML_INCLUDE_DIR}
     ${YAML_CPP_INCLUDE_DIR}
     ${Python3_INCLUDE_DIRS}
     modules/matplotlib-cpp

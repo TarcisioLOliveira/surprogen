@@ -12,7 +12,6 @@ target_link_libraries(${PROJECT_NAME}
     Python3::Python
     Python3::Module
     Python3::NumPy
-    sfml-graphics 
     ${YAML_CPP_LIBRARIES}
 )
 
