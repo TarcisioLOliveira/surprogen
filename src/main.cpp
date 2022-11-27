@@ -19,9 +19,13 @@
  */
 
 #include "solver/MMASolver.hpp"
-#include "matplotlibcpp.h"
+#include "engine2D/random_discrete.hpp"
 
 int main(int argc, char* argv[]){
+
+    engine2D::RandomDiscrete r(1.5, -1, 4, -15, 15, 500, 1e-3);
+
+    r.optimize();
 
     return 0;
 }
