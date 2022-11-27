@@ -95,8 +95,12 @@ class RoughnessAverage{
 
     inline void update_dRa(const double z_avg, const Vec& dz_avg, const Vec& z){
         const size_t LEN = z.size();
+        double const_part = 0;
         for(size_t i = 0; i < LEN; ++i){
-            dRa[i] = smooth::abs_deriv(z[i] - z_avg, ABS_EPS)*(1.0 - dz_avg[i])/LEN;
+            const_part += smooth::abs_deriv(z[i] - z_avg, ABS_EPS)*(- dz_avg[i]);
+        }
+        for(size_t i = 0; i < LEN; ++i){
+            dRa[i] = (const_part+ smooth::abs_deriv(z[i] - z_avg, ABS_EPS))/LEN;
         }
     }
 };
@@ -136,8 +140,12 @@ class RoughnessRMS{
 
     inline void update_dRq(const double z_avg, const Vec& dz_avg, const Vec& z){
         const size_t LEN = z.size();
+        double const_part = 0;
         for(size_t i = 0; i < LEN; ++i){
-            dRq[i] = (z[i] - z_avg)*(1.0 - dz_avg[i])/(Rq*LEN);
+            const_part += (z[i] - z_avg)*(- dz_avg[i]);
+        }
+        for(size_t i = 0; i < LEN; ++i){
+            dRq[i] = (const_part + (z[i] - z_avg))/(Rq*LEN);
         }
     }
 };
@@ -177,9 +185,14 @@ class RoughnessSkewness{
 
     inline void update_dRsk(const double z_avg, const Vec& dz_avg, const double Rq, const Vec& dRq, const Vec& z){
         const size_t LEN = z.size();
+        double const_part = 0;
         for(size_t i = 0; i < LEN; ++i){
             const double zz = z[i] - z_avg;
-            dRsk[i] = 3*(zz*zz*(1.0 - dz_avg[i])/(Rq*Rq*Rq*LEN) - Rsk*dRq[i]/Rq);
+            const_part += zz*zz*(-dz_avg[i]);
+        }
+        for(size_t i = 0; i < LEN; ++i){
+            const double zz = z[i] - z_avg;
+            dRsk[i] = 3*((const_part + zz*zz)/(Rq*Rq*Rq*LEN) - Rsk*dRq[i]/Rq);
         }
     }
 };
@@ -219,9 +232,14 @@ class RoughnessKurtosis{
 
     inline void update_dRku(const double z_avg, const Vec& dz_avg, const double Rq, const Vec& dRq, const Vec& z){
         const size_t LEN = z.size();
+        double const_part = 0;
         for(size_t i = 0; i < LEN; ++i){
             const double zz = z[i] - z_avg;
-            dRku[i] = 4*(zz*zz*zz*(1.0 - dz_avg[i])/(Rq*Rq*Rq*Rq*LEN) - Rku*dRq[i]/Rq);
+            const_part += zz*zz*zz*(- dz_avg[i]);
+        }
+        for(size_t i = 0; i < LEN; ++i){
+            const double zz = z[i] - z_avg;
+            dRku[i] = 4*((const_part + zz*zz*zz)/(Rq*Rq*Rq*Rq*LEN) - Rku*dRq[i]/Rq);
         }
     }
 };
