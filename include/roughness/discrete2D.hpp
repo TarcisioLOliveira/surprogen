@@ -22,6 +22,7 @@
 #define ROUGHNESS_DISCRETE2D_HPP
 
 #include <cstddef>
+#include <numeric>
 #include "main.hpp"
 #include "smooth.hpp"
 
@@ -50,18 +51,11 @@ class AverageHeight{
     const Vec dz_avg;
 
     inline double update_z_avg(const Vec& z){
-        double A = 0;
-        for(size_t i = 1; i < z.size(); ++i){
-            A += (z[i] + z[i-1])/2;
-        }
+        double A = std::accumulate(z.begin(), z.end(), 0.0);
         return A/z.size();
     }
     inline Vec init_dz_avg(const Vec& z){
-        Vec dz(z.size(),0);
-        for(size_t i = 1; i < z.size(); ++i){
-            dz[i-1] += 0.5;
-            dz[i]   += 0.5;
-        }
+        Vec dz(z.size(),1);
         return dz;
     }
 };
