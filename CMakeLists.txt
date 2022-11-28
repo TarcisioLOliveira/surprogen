@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.0)
-set(PROJECT_NAME texgen)
+set(PROJECT_NAME surprogen)
 
 project(${PROJECT_NAME})
 

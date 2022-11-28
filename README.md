@@ -1,1 +1,1 @@
-# texgen - optimization-based texture generation
+# Surprogen - Optimization-based roughness profile generator
