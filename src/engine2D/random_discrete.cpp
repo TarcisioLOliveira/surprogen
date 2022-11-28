@@ -35,6 +35,8 @@ RandomDiscrete::RandomDiscrete(const double Ra_max, const double Rsk_max, const 
 
 void RandomDiscrete::optimize(){
 
+    namespace plt = matplotlibcpp;
+
     Vec z(N);
     Vec x(N);
     std::iota(x.begin(), x.end(), 0);
@@ -91,6 +93,18 @@ void RandomDiscrete::optimize(){
         dg[i*M + 5] = -dRku[i];
     }
 
+    // Prevent matplotlib from throwing the window to top at every update
+    plt::backend("TkAgg");
+
+    plt::figure();
+
+    plt::Plot plot("Profile", x, z);
+    plt::xlabel("x [μm]");
+    plt::ylabel("z [μm]");
+
+    plt::show(false);
+    plt::pause(0.0001);
+
     std::cout << std::setprecision(15);
 
     std::cout << "z_avg: " << z_avg.get() << std::endl;
@@ -132,6 +146,10 @@ void RandomDiscrete::optimize(){
             dg[i*M + 5] = -dRku[i];
         }
 
+        plot.update(x, z);
+        plt::draw();
+        plt::pause(0.0001);
+
         std::cout << "z_avg: " << z_avg.get() << std::endl;
         std::cout << "Ra:    " << Ra.get() << std::endl;
         std::cout << "Rsk:   " << Rsk.get() << std::endl;
@@ -140,8 +158,7 @@ void RandomDiscrete::optimize(){
 
         ++iter;
     } while(std::abs(Ra_d) > tol || std::abs(Rsk_d) > tol || std::abs(Rku_d) > tol);
-    
-    namespace plt = matplotlibcpp;
+
 
     std::ofstream file;
 
@@ -160,18 +177,7 @@ void RandomDiscrete::optimize(){
     file << std::endl;
     file.close();
 
-    plt::figure();
-
-    plt::ion();
-
-    plt::plot(x, z);
-    plt::xlabel("x [μm]");
-    plt::ylabel("z [μm]");
-    plt::tight_layout();
-
     plt::save("plot.pdf");
-
-    plt::show(true);
 
     plt::close();
 }
