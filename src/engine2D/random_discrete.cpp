@@ -72,26 +72,9 @@ void RandomDiscrete::optimize(){
     const Vec& dRsk = Rsk.get_deriv();
     const Vec& dRku = Rku.get_deriv();
 
-    Vec g{
-        Ra_d,
-        Rsk_d,
-        Rku_d,
-        -Ra_d,
-        -Rsk_d,
-        -Rku_d
-    };
-
+    Vec g(2*M, 0);
     Vec df(N,0);
     Vec dg(M*N, 0);
-    for(size_t i = 0; i < N; ++i){
-        df[i]       = 2*z_avg_d*dz_avg[i];
-        dg[i*M + 0] = dRa[i];
-        dg[i*M + 1] = dRsk[i];
-        dg[i*M + 2] = dRku[i];
-        dg[i*M + 3] = -dRa[i];
-        dg[i*M + 4] = -dRsk[i];
-        dg[i*M + 5] = -dRku[i];
-    }
 
     // Prevent matplotlib from throwing the window to top at every update
     plt::backend("TkAgg");
@@ -107,17 +90,8 @@ void RandomDiscrete::optimize(){
 
     std::cout << std::setprecision(15);
 
-    std::cout << "z_avg: " << z_avg.get() << std::endl;
-    std::cout << "Ra:    " << Ra.get() << std::endl;
-    std::cout << "Rsk:   " << Rsk.get() << std::endl;
-    std::cout << "Rku:   " << Rku.get() << std::endl;
-    std::cout << std::endl;
-
     size_t iter = 0;
     do {
-        // solver.update(z, df, g, dg, z_min, z_max);
-        mma.Update(z.data(), df.data(), g.data(), dg.data(), zmin.data(), zmax.data());
-
         z_avg.update(z);
         Ra.update(&z_avg, z);
         Rq.update(&z_avg, z);
@@ -156,8 +130,15 @@ void RandomDiscrete::optimize(){
         std::cout << "Rku:   " << Rku.get() << std::endl;
         std::cout << std::endl;
 
+        if(std::abs(Ra_d) < tol && std::abs(Rsk_d) < tol && std::abs(Rku_d) < tol){
+            break;
+        }
+
+        // solver.update(z, df, g, dg, z_min, z_max);
+        mma.Update(z.data(), df.data(), g.data(), dg.data(), zmin.data(), zmax.data());
+
         ++iter;
-    } while(std::abs(Ra_d) > tol || std::abs(Rsk_d) > tol || std::abs(Rku_d) > tol);
+    } while(true);
 
 
     std::ofstream file;
