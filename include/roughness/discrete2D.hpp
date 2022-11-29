@@ -100,7 +100,7 @@ class RoughnessAverage{
             const_part += smooth::abs_deriv(z[i] - z_avg, ABS_EPS)*(- dz_avg[i]);
         }
         for(size_t i = 0; i < LEN; ++i){
-            dRa[i] = (const_part+ smooth::abs_deriv(z[i] - z_avg, ABS_EPS))/LEN;
+            dRa[i] = (const_part + smooth::abs_deriv(z[i] - z_avg, ABS_EPS))/LEN;
         }
     }
 };
