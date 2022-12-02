@@ -97,10 +97,10 @@ class RoughnessAverage{
         const size_t LEN = z.size();
         double const_part = 0;
         for(size_t i = 0; i < LEN; ++i){
-            const_part += smooth::abs_deriv(z[i] - z_avg, ABS_EPS)*(- dz_avg[i]);
+            const_part += smooth::abs_deriv(z[i] - z_avg, ABS_EPS);
         }
         for(size_t i = 0; i < LEN; ++i){
-            dRa[i] = (const_part + smooth::abs_deriv(z[i] - z_avg, ABS_EPS))/LEN;
+            dRa[i] = (const_part*(-dz_avg[i]) + smooth::abs_deriv(z[i] - z_avg, ABS_EPS))/LEN;
         }
     }
 };
@@ -142,10 +142,10 @@ class RoughnessRMS{
         const size_t LEN = z.size();
         double const_part = 0;
         for(size_t i = 0; i < LEN; ++i){
-            const_part += (z[i] - z_avg)*(- dz_avg[i]);
+            const_part += (z[i] - z_avg);
         }
         for(size_t i = 0; i < LEN; ++i){
-            dRq[i] = (const_part + (z[i] - z_avg))/(Rq*LEN);
+            dRq[i] = (const_part*(-dz_avg[i]) + (z[i] - z_avg))/(Rq*LEN);
         }
     }
 };
@@ -188,11 +188,11 @@ class RoughnessSkewness{
         double const_part = 0;
         for(size_t i = 0; i < LEN; ++i){
             const double zz = z[i] - z_avg;
-            const_part += zz*zz*(-dz_avg[i]);
+            const_part += zz*zz;
         }
         for(size_t i = 0; i < LEN; ++i){
             const double zz = z[i] - z_avg;
-            dRsk[i] = 3*((const_part + zz*zz)/(Rq*Rq*Rq*LEN) - Rsk*dRq[i]/Rq);
+            dRsk[i] = 3*((const_part*(-dz_avg[i]) + zz*zz)/(Rq*Rq*Rq*LEN) - Rsk*dRq[i]/Rq);
         }
     }
 };
@@ -235,11 +235,11 @@ class RoughnessKurtosis{
         double const_part = 0;
         for(size_t i = 0; i < LEN; ++i){
             const double zz = z[i] - z_avg;
-            const_part += zz*zz*zz*(- dz_avg[i]);
+            const_part += zz*zz*zz;
         }
         for(size_t i = 0; i < LEN; ++i){
             const double zz = z[i] - z_avg;
-            dRku[i] = 4*((const_part + zz*zz*zz)/(Rq*Rq*Rq*Rq*LEN) - Rku*dRq[i]/Rq);
+            dRku[i] = 4*((const_part*(-dz_avg[i]) + zz*zz*zz)/(Rq*Rq*Rq*Rq*LEN) - Rku*dRq[i]/Rq);
         }
     }
 };
