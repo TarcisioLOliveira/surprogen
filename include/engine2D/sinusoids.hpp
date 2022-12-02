@@ -27,12 +27,12 @@ namespace engine2D{
 
 class Sinusoids : public Engine2D{
     public:
-    Sinusoids(const double Ra_max, const double Rsk_max, const double Rku_max, const double z_min, const double z_max, const double f_min, const double f_max, const size_t Nz, const size_t Nparams, const double tol);
+    Sinusoids(const double Ra_max, const double Rsk_max, const double Rku_max, const double z_min, const double z_max, const double A_min, const double A_max, const size_t Nz, const size_t Nparams, const double tol);
     virtual ~Sinusoids() = default;
 
     virtual void optimize() override;
     private:
-    const double Ra_max, Rsk_max, Rku_max, z_min, z_max, z_mid, f_min, f_max, tol;
+    const double Ra_max, Rsk_max, Rku_max, z_min, z_max, z_mid, A_min, A_max, tol;
     const size_t Nz, Nparams;
 
     void get_z(const Vec& x, Vec& z, const Vec& params) const;

@@ -23,7 +23,7 @@
 
 int main(int argc, char* argv[]){
 
-    engine2D::Sinusoids r(1.5, -1, 2, -15, 15, 0, 100000, 500, 1000, 1e-3);
+    engine2D::Sinusoids r(1.5, -1, 4, -5, 5, -15.0*8/700, 15.0*8/700, 500, 700, 1e-3);
 
     r.optimize();
 
