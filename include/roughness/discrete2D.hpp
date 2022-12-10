@@ -55,7 +55,7 @@ class AverageHeight{
         return A/z.size();
     }
     inline Vec init_dz_avg(const Vec& z){
-        Vec dz(z.size(),1);
+        Vec dz(z.size(),1.0/z.size());
         return dz;
     }
 };
