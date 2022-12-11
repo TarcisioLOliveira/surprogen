@@ -18,14 +18,28 @@
  *
  */
 
-#include "solver/MMASolver.hpp"
-#include "engine2D/steps.hpp"
+#ifndef ENGINE2D_STEPS_HPP
+#define ENGINE2D_STEPS_HPP
 
-int main(int argc, char* argv[]){
+#include "engine2D.hpp"
 
-    engine2D::Steps r(1.5, 1, 4, -10, 10, 10, 20, 2000, 500, 100, 1e-2);
+namespace engine2D{
 
-    r.optimize();
+class Steps : public Engine2D{
+    public:
+    Steps(const double Ra_max, const double Rsk_max, const double Rku_max, const double z_min, const double z_max, const double w_max, const double h_max, const double alpha, const size_t Nz, const size_t Nparams, const double tol);
+    virtual ~Steps() = default;
 
-    return 0;
+    virtual void optimize() override;
+    private:
+    const double Ra_max, Rsk_max, Rku_max, z_min, z_max, z_mid, w_max, h_max, alpha, tol;
+    const size_t Nz, Nparams;
+
+    void get_z(const Vec& x, Vec& z, const Vec& params) const;
+    void get_dz(const Vec& x, const Vec& dRdz, Vec& out_dz, const Vec& params) const;
+};
+
 }
+
+
+#endif
